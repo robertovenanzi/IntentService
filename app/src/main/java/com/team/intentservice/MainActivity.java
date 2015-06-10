@@ -6,14 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     TextView textResult;
     ProgressBar progressBar;
+    Button button;
 
     private MyBroadcastReceiver myBroadcastReceiver;
     private MyBroadcastReceiver_Update myBroadcastReceiver_Update;
@@ -24,6 +27,20 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         textResult = (TextView)findViewById(R.id.result);
         progressBar = (ProgressBar)findViewById(R.id.progressbar);
+        button = (Button)  findViewById(R.id.button1);
+        button.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //un-register BroadcastReceiver
+        unregisterReceiver(myBroadcastReceiver);
+        unregisterReceiver(myBroadcastReceiver_Update);
+    }
+
+    @Override
+    public void onClick(View v) {
 
         //prepare MyParcelable passing to intentMyIntentService
         String msgToIntentService = "Android-er";
@@ -44,14 +61,7 @@ public class MainActivity extends Activity {
         IntentFilter intentFilter_update = new IntentFilter(MyIntentService.ACTION_MyUpdate);
         intentFilter_update.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(myBroadcastReceiver_Update, intentFilter_update);
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //un-register BroadcastReceiver
-        unregisterReceiver(myBroadcastReceiver);
-        unregisterReceiver(myBroadcastReceiver_Update);
     }
 
     public class MyBroadcastReceiver extends BroadcastReceiver {
